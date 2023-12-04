@@ -2,7 +2,6 @@ type Weight = usize;
 
 #[derive(Debug, Clone)]
 pub enum Rope {
-    Sentinel,
     Leaf(String, Weight),
     Node(Box<Rope>, Weight, Box<Rope>),
 }
@@ -15,7 +14,6 @@ impl Rope {
 
     fn weight(&self) -> Weight {
         match self {
-            Rope::Sentinel => 0,
             Rope::Leaf(_, w) => *w,
             Rope::Node(_, w, _) => *w,
         }
@@ -23,7 +21,6 @@ impl Rope {
 
     pub fn len(&self) -> usize {
         match self {
-            Rope::Sentinel => 0,
             Rope::Leaf(s, _) => s.len(),
             Rope::Node(l, w, r) => w + r.len(),
         }
@@ -31,7 +28,6 @@ impl Rope {
 
     pub fn index(&self, i: usize) -> char {
         match self {
-            Rope::Sentinel => panic!("Index out of bounds"),
             Rope::Leaf(s, _) => s.chars().nth(i).unwrap(),
             Rope::Node(l, w, r) => {
                 if i < *w {
@@ -50,7 +46,6 @@ impl Rope {
 
     pub fn split(self, i: usize) -> (Rope, Rope) {
         match self {
-            Rope::Sentinel => panic!("Index out of bounds"),
             Rope::Leaf(s, _) => {
                 let (l, r) = s.split_at(i);
                 (Rope::Leaf(l.to_string(), l.len()), Rope::Leaf(r.to_string(), r.len()))
@@ -91,7 +86,6 @@ impl Rope {
 
     pub fn collect(&self) -> String {
         match self {
-            Rope::Sentinel => String::new(),
             Rope::Leaf(s, _) => s.clone(),
             Rope::Node(l, _, r) => format!("{}{}", l.collect(), r.collect())
         }
