@@ -1,6 +1,6 @@
 use std::vec;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Color {
     Red,
     Black,
@@ -51,11 +51,41 @@ pub enum Traversal {
     Preorder,
     Postorder,
 }
+impl<K: Ord + Eq, V: Clone> RedBlackTree<K, V> {
+    fn noredred(self) -> bool {
+        match self {
+            RedBlackTree::Leaf => true,
+            RedBlackTree::Node(l, (_, _, c), r) => match (c, l.color(), r.color()) {
+                (Color::Red, _, Color::Red) | (Color::Red, Color::Red, _) => false,
+                _ => l.noredred() && r.noredred(),
+            },
+        }
+    }
+
+    fn black_equal(self) -> (u32, bool) {
+        match self {
+            RedBlackTree::Leaf => (1, true),
+            RedBlackTree::Node(l, (_, _, c), r) => {
+                let (ln, le) = l.black_equal();
+                let (rn, re) = r.black_equal();
+                if !(le || re) || (ln != rn) {
+                    (0, false)
+                } else {
+                    (if c == Color::Black { 1 } else { 0 } + ln, le)
+                }
+            }
+        }
+    }
+}
 
 impl<K: Ord + Eq, V: Clone> RedBlackTree<K, V> {
     pub fn insert(self, k: K, v: V) -> Self {
         match self {
-            RedBlackTree::Leaf => todo!(),
+            RedBlackTree::Leaf => RedBlackTree::Node(
+                Box::new(RedBlackTree::Leaf),
+                (k, v, Color::Black),
+                Box::new(RedBlackTree::Leaf),
+            ),
             RedBlackTree::Node(_, _, _) => todo!(),
         }
     }
@@ -66,8 +96,6 @@ impl<K: Ord + Eq, V: Clone> RedBlackTree<K, V> {
             RedBlackTree::Node(_, _, _) => todo!(),
         }
     }
-
-
 
     pub fn find(&self, k: &K) -> Option<V> {
         match self {
@@ -89,7 +117,7 @@ impl<K: Ord + Eq, V: Clone> RedBlackTree<K, V> {
     }
 
     pub fn traverse(&self, t: &Traversal) -> Vec<V> {
-        let (ltrav, v, rtrav) = if let RedBlackTree::Node(l, k, v, c, r) = self {
+        let (ltrav, v, rtrav) = if let RedBlackTree::Node(l, (k, v, c), r) = self {
             (l.traverse(t), v, r.traverse(t))
         } else {
             return vec![];
