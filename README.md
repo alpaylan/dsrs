@@ -7,5 +7,5 @@ List:
 - [ ] Red-Black Trees(in progress)
 - [x] Bloom Filter
 - [x] Rope
-- [ ] Huffman Encoder
+- [x] Trie
 - [ ] ???
