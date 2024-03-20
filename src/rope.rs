@@ -12,12 +12,6 @@ impl Rope {
         Rope::Leaf(s.to_string(), s.len()).balance()
     }
 
-    fn weight(&self) -> Weight {
-        match self {
-            Rope::Leaf(_, w) => *w,
-            Rope::Node(_, w, _) => *w,
-        }
-    }
 
     pub fn len(&self) -> usize {
         match self {

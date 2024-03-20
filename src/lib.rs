@@ -7,3 +7,4 @@ pub mod rbt;
 pub use rbt::RedBlackTree;
 pub mod rope;
 pub use rope::Rope;
+pub mod trie;
